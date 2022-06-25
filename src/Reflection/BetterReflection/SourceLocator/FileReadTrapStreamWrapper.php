@@ -94,11 +94,15 @@ final class FileReadTrapStreamWrapper
 	 */
 	public function stream_open($path, $mode, $options, &$openedPath): bool
 	{
-		self::$autoloadLocatedFiles[] = $path;
+		$exists = (bool) (is_file($path) || stream_resolve_include_path($path));
+
+		if ($exists) {
+			self::$autoloadLocatedFiles[] = $path;
+		}
 		$this->readFromFile = false;
 		$this->seekPosition = 0;
 
-		return true;
+		return $exists;
 	}
 
 	/**
